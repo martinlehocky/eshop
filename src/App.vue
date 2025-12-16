@@ -70,9 +70,9 @@ const clearCart = () => {
 <template>
   <div class="app-container">
     <header class="header">
-      <h1>My Vue Shop</h1>
+      <h1>E-Shop!</h1>
       <div class="cart-icon" @click="isCartOpen = true">
-        <CIcon :icon="cilCart" size="xl" />
+        <CIcon :icon="cilCart" :height="24" />
         <span class="badge" v-if="cartItemCount > 0">{{ cartItemCount }}</span>
       </div>
     </header>
@@ -128,6 +128,7 @@ const clearCart = () => {
 }
 
 .cart-icon {
+  margin-right: 1rem;
   position: relative;
   font-size: 1.5rem;
   cursor: pointer;

@@ -1,4 +1,6 @@
 <script setup>
+import { CIcon } from '@coreui/icons-vue';
+import { cilTrash } from '@coreui/icons';
 
 const props = defineProps({
   isOpen: Boolean,
@@ -43,7 +45,7 @@ const total = props.cartItems.reduce((acc, item) => acc + (item.price * item.qty
               <button @click="emit('update-quantity', item.id, -1)">-</button>
               <span>{{ item.qty }}</span>
               <button @click="emit('update-quantity', item.id, 1)">+</button>
-              <button class="remove-btn" @click="emit('remove-item', item.id)">🗑️</button>
+              <button class="remove-btn" @click="emit('remove-item', item.id)"><CIcon :icon="cilTrash" :height="24" /></button>
             </div>
           </div>
         </div>
@@ -58,6 +60,12 @@ const total = props.cartItems.reduce((acc, item) => acc + (item.price * item.qty
 </template>
 
 <style scoped>
+
+.item-actions {
+  display: flex;
+  align-items: center;
+}
+
 .drawer-overlay {
   position: fixed;
   top: 0;
