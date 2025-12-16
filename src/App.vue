@@ -1,146 +1,165 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, reactive } from 'vue'
+import ProductCard from './components/ProductCard.vue'
+import CartDrawer from './components/CartDrawer.vue'
+import productsData from './data/products.json'
 
-const newTodo = ref('')
-const todos = ref([])
+const products = ref(productsData)
+const isCartOpen = ref(false)
+const cart = ref([])
 
-function addTodo() {
-  if (!newTodo.value.trim()) return
-  todos.value.push({
-    id: crypto.randomUUID(),
-    text: newTodo.value.trim(),
-    completed: false
+const filters = reactive({
+  text: '',
+  category: '',
+  priceMin: null,
+  priceMax: null
+})
+
+const categories = computed(() => {
+  return [...new Set(products.value.map(p => p.category))]
+})
+
+const filteredProducts = computed(() => {
+  return products.value.filter(product => {
+    const matchesText = product.title.toLowerCase().includes(filters.text.toLowerCase())
+    const matchesCategory = filters.category ? product.category === filters.category : true
+    const matchesPriceMin = filters.priceMin ? product.price >= filters.priceMin : true
+    const matchesPriceMax = filters.priceMax ? product.price <= filters.priceMax : true
+
+    return matchesText && matchesCategory && matchesPriceMin && matchesPriceMax
   })
-  newTodo.value = ''
+})
+
+const cartItemCount = computed(() => {
+  return cart.value.reduce((acc, item) => acc + item.qty, 0)
+})
+
+const addToCart = (product) => {
+  const existingItem = cart.value.find(item => item.id === product.id)
+
+  if (existingItem) {
+    existingItem.qty++
+  } else {
+    cart.value.push({ ...product, qty: 1 })
+  }
+
+  isCartOpen.value = true
 }
 
-function removeTodo(todo) {
-  todos.value = todos.value.filter(t => t.id !== todo.id)
+const updateQuantity = (id, change) => {
+  const item = cart.value.find(i => i.id === id)
+  if (item) {
+    item.qty += change
+    if (item.qty <= 0) {
+      removeFromCart(id)
+    }
+  }
 }
 
-function completeTodo(todo) {
-  todo.completed = true
+const removeFromCart = (id) => {
+  cart.value = cart.value.filter(item => item.id !== id)
+}
+
+const clearCart = () => {
+  cart.value = []
 }
 </script>
 
 <template>
-  <div class="todo-app">
-    <h1 class="title">TODO List</h1>
+  <div class="app-container">
+    <header class="header">
+      <h1>My Vue Shop</h1>
+      <div class="cart-icon" @click="isCartOpen = true">
+        🛒
+        <span class="badge" v-if="cartItemCount > 0">{{ cartItemCount }}</span>
+      </div>
+    </header>
 
-    <section class="active-tasks">
-      <h2>Active Tasks</h2>
-      <ul v-if="todos.filter(t => !t.completed).length">
-        <li v-for="todo in todos.filter(t => !t.completed)" :key="todo.id" class="todo-item">
-          <span>{{ todo.text }}</span>
-          <div class="actions">
-            <button class="complete-btn" @click="completeTodo(todo)">Complete</button>
-            <button class="delete-btn" @click="removeTodo(todo)">Delete</button>
-          </div>
-        </li>
-      </ul>
-      <p v-else>No active tasks!</p>
-    </section>
+    <div class="filters">
+      <input v-model="filters.text" placeholder="Search products..." />
 
-    <section class="add-section">
-      <h2>Add New Task</h2>
-      <form @submit.prevent="addTodo" class="add-form">
-        <input v-model="newTodo" placeholder="Enter a new task..." class="input-task" />
-        <button>Add</button>
-      </form>
-    </section>
+      <select v-model="filters.category">
+        <option value="">All Categories</option>
+        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+      </select>
 
-    <section class="completed-tasks">
-      <h2>Completed Tasks</h2>
-      <ul v-if="todos.filter(t => t.completed).length">
-        <li v-for="todo in todos.filter(t => t.completed)" :key="todo.id" class="todo-item completed">
-          <span>{{ todo.text }}</span>
-          <button class="delete-btn" @click="removeTodo(todo)">Delete</button>
-        </li>
-      </ul>
-      <p v-else>No completed tasks yet!</p>
-    </section>
+      <div class="price-range">
+        <input type="number" v-model.number="filters.priceMin" placeholder="Min Price" />
+        <input type="number" v-model.number="filters.priceMax" placeholder="Max Price" />
+      </div>
+    </div>
+
+    <main class="product-grid">
+      <ProductCard
+          v-for="product in filteredProducts"
+          :key="product.id"
+          :product="product"
+          @add-to-cart="addToCart"
+      />
+    </main>
+
+    <CartDrawer
+        :is-open="isCartOpen"
+        :cart-items="cart"
+        @close="isCartOpen = false"
+        @update-quantity="updateQuantity"
+        @remove-item="removeFromCart"
+        @clear-cart="clearCart"
+    />
   </div>
 </template>
 
 <style scoped>
-.todo-app {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 25px;
-  border-radius: 12px;
-  font-family: 'Inter', sans-serif;
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
 }
 
-h1, h2 {
-  text-align: center;
-}
-
-.active-tasks, .completed-tasks, .add-section {
-  margin-top: 20px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.todo-item {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8f9fa;
-  margin-bottom: 8px;
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  margin-bottom: 2rem;
 }
 
-.todo-item.completed span {
-  text-decoration: line-through;
-  color: gray;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-button {
-  border: none;
+.cart-icon {
+  position: relative;
+  font-size: 1.5rem;
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
 }
 
-.complete-btn {
-  background-color: #28a745;
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background-color: red;
   color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.8rem;
 }
 
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
-}
-
-
-.add-form {
+.filters {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+  flex-wrap: wrap;
 }
 
-.input-task {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px;
+.filters input, .filters select {
+  padding: 0.5rem;
   border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-button[type="submit"] {
-  background: #007bff;
-  color: white;
-}
-
-button[type="submit"]:hover {
-  background: #0069d9;
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 0 1rem;
 }
 </style>

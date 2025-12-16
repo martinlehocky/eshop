@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Smartphone X",
+    "description": "Latest model with high-res camera.",
+    "photo": "https://via.placeholder.com/150",
+    "category": "Electronics",
+    "price": 699
+  },
+  {
+    "id": 2,
+    "title": "Running Shoes",
+    "description": "Comfortable sport shoes.",
+    "photo": "https://via.placeholder.com/150",
+    "category": "Sport",
+    "price": 89
+  },
+  {
+    "id": 3,
+    "title": "Novel Book",
+    "description": "Bestselling mystery novel.",
+    "photo": "https://via.placeholder.com/150",
+    "category": "Books",
+    "price": 15
+  },
+  {
+    "id": 4,
+    "title": "Wireless Headphones",
+    "description": "Noise cancelling over-ear headphones.",
+    "photo": "https://via.placeholder.com/150",
+    "category": "Electronics",
+    "price": 199
+  },
+  {
+    "id": 5,
+    "title": "Yoga Mat",
+    "description": "Non-slip mat for yoga.",
+    "photo": "https://via.placeholder.com/150",
+    "category": "Sport",
+    "price": 25
+  }
+]
