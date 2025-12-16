@@ -3,6 +3,8 @@ import { ref, computed, reactive } from 'vue'
 import ProductCard from './components/ProductCard.vue'
 import CartDrawer from './components/CartDrawer.vue'
 import productsData from './data/products.json'
+import { CIcon } from '@coreui/icons-vue';
+import { cilCart } from '@coreui/icons';
 
 const products = ref(productsData)
 const isCartOpen = ref(false)
@@ -70,7 +72,7 @@ const clearCart = () => {
     <header class="header">
       <h1>My Vue Shop</h1>
       <div class="cart-icon" @click="isCartOpen = true">
-        🛒
+        <CIcon :icon="cilCart" size="xl" />
         <span class="badge" v-if="cartItemCount > 0">{{ cartItemCount }}</span>
       </div>
     </header>
