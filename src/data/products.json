@@ -3,7 +3,7 @@
     "id": 1,
     "title": "Smartphone",
     "description": "Latest model with high-res camera.",
-    "photo": "https://via.placeholder.com/150",
+    "photo": "https://d3i2ioj9h3k8lp.cloudfront.net/thumbor/dWh6S8NNniaYCLu-ADlxYqlAnsY=/1760x0/filters:quality(60)/s3.eu-central-1.amazonaws.com/production-images.bb.projectx.wdev.sk/original/000/003/385/000003385469_0.jpg%3Fv=059d4e4b484c267379071bba94b48971&r=2",
     "category": "Electronics",
     "price": 699
   },
@@ -11,7 +11,7 @@
     "id": 2,
     "title": "Running Shoes",
     "description": "Comfortable sport shoes.",
-    "photo": "https://via.placeholder.com/150",
+    "photo": "https://cdn.salla.sa/RvPxw/9a80a5fc-4c6c-4e68-9995-6d1b8ee75003-1000x1000-cPMWSgDQTgiTccwFG4gYByjnP8WzMcoyzJ8k1grO.png",
     "category": "Sport",
     "price": 89
   },
@@ -19,7 +19,7 @@
     "id": 3,
     "title": "Novel Book",
     "description": "Bestselling mystery novel.",
-    "photo": "https://via.placeholder.com/150",
+    "photo": "https://mrtns.sk/tovar/_l/2836/l2836205.jpg?v=17665542422",
     "category": "Books",
     "price": 15
   },
@@ -27,7 +27,7 @@
     "id": 4,
     "title": "Wireless Headphones",
     "description": "Noise cancelling over-ear headphones.",
-    "photo": "https://via.placeholder.com/150",
+    "photo": "https://bhcase.sk/wp-content/uploads/2024/05/MQTR3.jpeg",
     "category": "Electronics",
     "price": 199
   },
@@ -35,7 +35,7 @@
     "id": 5,
     "title": "Yoga Mat",
     "description": "Non-slip mat for yoga.",
-    "photo": "https://via.placeholder.com/150",
+    "photo": "https://www.exisport.com/17531-thickbox_default/exisport-fitness-podlozka-lifefit-yoga-mat-exkl180x60x15modra-trl.jpg",
     "category": "Sport",
     "price": 25
   }

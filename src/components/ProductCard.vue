@@ -37,8 +37,8 @@ const emit = defineEmits(['add-to-cart'])
 
 .product-image {
   width: 100%;
-  height: 150px;
-  object-fit: cover;
+  height: 200px;
+  object-fit: contain;
   margin-bottom: 1rem;
 }
 

@@ -11,6 +11,7 @@
   "dependencies": {
     "@coreui/icons": "^3.0.1",
     "@coreui/icons-vue": "^2.2.0",
+    "sweetalert2": "^11.26.17",
     "vue": "^3.5.24"
   },
   "devDependencies": {

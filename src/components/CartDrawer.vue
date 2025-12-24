@@ -1,6 +1,7 @@
 <script setup>
 import { CIcon } from '@coreui/icons-vue';
 import { cilTrash } from '@coreui/icons';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
   isOpen: Boolean,
@@ -14,12 +15,16 @@ const handleBuy = () => {
     title: 'Thank you!',
     text: 'Your purchase was successful.',
     icon: 'success',
-    confirmButtonText: 'Cool'
+    confirmButtonText: 'Cool',
+    didOpen: () => {
+      document.querySelector('.swal2-popup').style.fontFamily = 'Arial, sans-serif'
+    }
   }).then(() => {
     emit('clear-cart')
     emit('close')
   })
 }
+
 
 const total = props.cartItems.reduce((acc, item) => acc + (item.price * item.qty), 0)
 </script>
@@ -150,4 +155,5 @@ const total = props.cartItems.reduce((acc, item) => acc + (item.price * item.qty
   background: transparent;
   border: none;
 }
+
 </style>
