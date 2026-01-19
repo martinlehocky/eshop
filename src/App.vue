@@ -1,40 +1,32 @@
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import ProductCard from './components/ProductCard.vue'
 import CartDrawer from './components/CartDrawer.vue'
-import productsData from './data/products.json'
+import AddProductForm from './components/AddProductForm.vue'
 import { CIcon } from '@coreui/icons-vue';
 import { cilCart } from '@coreui/icons';
 
-async function fetchData(){
-  const response = await fetch('http://localhost:3333/produkty')
-  const products = await response.json()
-
-  console.log(products)
-}
-
-fetchData()
-
-async function addProduct() {
-  const response = await fetch('http://localhost:3333/produkty', {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      name: "Product 3",
-      category: "phone",
-      price: 350
-    })
-  });
-  
-  const product = await response.json();
-  console.log(product);
-}
-
-const products = ref(productsData)
+const products = ref([])
 const isCartOpen = ref(false)
 const cart = ref([])
+
+async function fetchData(){
+  try {
+    const response = await fetch('http://localhost:3333/produkty')
+    const data = await response.json()
+    products.value = data
+  } catch (error) {
+    console.error('Failed to fetch products:', error)
+  }
+}
+
+function handleProductAdded(newProduct) {
+  products.value.push(newProduct)
+}
+
+onMounted(() => {
+  fetchData()
+})
 
 const filters = reactive({
   text: '',
@@ -49,7 +41,7 @@ const categories = computed(() => {
 
 const filteredProducts = computed(() => {
   return products.value.filter(product => {
-    const matchesText = product.title.toLowerCase().includes(filters.text.toLowerCase())
+    const matchesText = product.name.toLowerCase().includes(filters.text.toLowerCase())
     const matchesCategory = filters.category ? product.category === filters.category : true
     const matchesPriceMin = filters.priceMin ? product.price >= filters.priceMin : true
     const matchesPriceMax = filters.priceMax ? product.price <= filters.priceMax : true
@@ -103,7 +95,8 @@ const clearCart = () => {
       </div>
     </header>
 
-    <button @click="addProduct()">ADD PRODUCT</button>
+    <AddProductForm @product-added="handleProductAdded" />
+
     <div class="filters">
       <input v-model="filters.text" placeholder="Search products..." />
 

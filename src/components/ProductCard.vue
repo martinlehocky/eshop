@@ -11,9 +11,9 @@ const emit = defineEmits(['add-to-cart'])
 
 <template>
   <div class="product-card">
-    <img :src="product.photo" :alt="product.title" class="product-image" />
+    <img :src="product.image" :alt="product.name" class="product-image" />
     <div class="product-info">
-      <h3>{{ product.title }}</h3>
+      <h3>{{ product.name }}</h3>
       <p class="category">{{ product.category }}</p>
       <p class="description">{{ product.description }}</p>
       <div class="price-action">
