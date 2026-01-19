@@ -6,6 +6,32 @@ import productsData from './data/products.json'
 import { CIcon } from '@coreui/icons-vue';
 import { cilCart } from '@coreui/icons';
 
+async function fetchData(){
+  const response = await fetch('http://localhost:3333/produkty')
+  const products = await response.json()
+
+  console.log(products)
+}
+
+fetchData()
+
+async function addProduct() {
+  const response = await fetch('http://localhost:3333/produkty', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: "Product 3",
+      category: "phone",
+      price: 350
+    })
+  });
+  
+  const product = await response.json();
+  console.log(product);
+}
+
 const products = ref(productsData)
 const isCartOpen = ref(false)
 const cart = ref([])
@@ -77,6 +103,7 @@ const clearCart = () => {
       </div>
     </header>
 
+    <button @click="addProduct()">ADD PRODUCT</button>
     <div class="filters">
       <input v-model="filters.text" placeholder="Search products..." />
 
