@@ -23,31 +23,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-const products = [
-    {
-        id: '1',
-        name: 'Product 1',
-        price: 100,
-        category: 'Category 1',
-        description: 'Description for Product 1',
-        image: 'https://placehold.co/300'
-    },
-    {
-        id: '2',
-        name: 'Product 2',
-        price: 200,
-        category: 'Category 2',
-        description: 'Description for Product 2',
-        image: 'https://placehold.co/300'
-    }
-]
+const fs = require('fs')
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
 app.get('/produkty', (req, res) => {
-    res.json(products);
+    const productsFile = path.join(__dirname, 'products.json');
+    if (fs.existsSync(productsFile)) {
+        const productsData = fs.readFileSync(productsFile, 'utf8');
+        res.json(JSON.parse(productsData));
+    } else {
+        res.json([]);
+    }
 })
 
 app.post('/produkty', upload.single('image'), (req, res) => {
@@ -72,7 +61,15 @@ app.post('/produkty', upload.single('image'), (req, res) => {
         image: imageUrl
     }
 
+    const productsFile = path.join(__dirname, 'products.json');
+    let products = [];
+    if (fs.existsSync(productsFile)) {
+        products = JSON.parse(fs.readFileSync(productsFile, 'utf8'));
+    }
+
     products.push(newProduct)
+    fs.writeFileSync(productsFile, JSON.stringify(products, null, 2), 'utf8');
+
     res.status(201).json(newProduct)
 })
 
