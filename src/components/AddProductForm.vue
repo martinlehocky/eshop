@@ -42,10 +42,9 @@ const submitForm = async () => {
       const newProduct = await response.json()
       alert('Produkt uspesne pridany!')
       emit('product-added', newProduct)
-      // Reset form
       formData.value = { name: '', price: null, category: '', description: '' }
       imageFile.value = null
-      isExpanded.value = false // Collapse after success
+      isExpanded.value = false
     } else {
       const text = await response.text()
       alert('Chyba pri pridavani: ' + text)
@@ -182,16 +181,13 @@ button:hover {
   background-color: #3aa876;
 }
 
-/* Transitions */
-.expand-enter-active,
-.expand-leave-active {
+ {
   transition: all 0.3s ease-in-out;
-  max-height: 500px; /* Arbitrary large height */
+  max-height: 500px;
   opacity: 1;
 }
 
-.expand-enter-from,
-.expand-leave-to {
+ {
   max-height: 0;
   opacity: 0;
   padding-top: 0;

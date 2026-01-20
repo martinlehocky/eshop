@@ -10,7 +10,6 @@ app.use(cors())
 app.use(express.json())
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 
-// Configure multer for file storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/')
@@ -42,12 +41,10 @@ app.get('/produkty', (req, res) => {
 app.post('/produkty', upload.single('image'), (req, res) => {
     const { category, name, price, description } = req.body
 
-    // Basic validation
     if (!name) return res.status(400).send('Pole nazov je povinne!')
     if (!price) return res.status(400).send('Pole cena je povinne!')
 
-    // Construct image URL
-    let imageUrl = 'https://placehold.co/300'; // Default image
+    let imageUrl = 'https://placehold.co/300';
     if (req.file) {
         imageUrl = `http://localhost:${port}/uploads/${req.file.filename}`
     }
