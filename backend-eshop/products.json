@@ -9,35 +9,35 @@
     },
     {
         "id": 2,
-        "title": "Running Shoes",
-        "description": "Comfortable sport shoes.",
-        "photo": "https://cdn.salla.sa/RvPxw/9a80a5fc-4c6c-4e68-9995-6d1b8ee75003-1000x1000-cPMWSgDQTgiTccwFG4gYByjnP8WzMcoyzJ8k1grO.png",
+        "name": "Running Shoes",
+        "price": 89,
         "category": "Sport",
-        "price": 89
+        "description": "Comfortable sport shoes.",
+        "image": "https://cdn.salla.sa/RvPxw/9a80a5fc-4c6c-4e68-9995-6d1b8ee75003-1000x1000-cPMWSgDQTgiTccwFG4gYByjnP8WzMcoyzJ8k1grO.png"
     },
     {
         "id": 3,
-        "title": "Novel Book",
-        "description": "Bestselling mystery novel.",
-        "photo": "https://mrtns.sk/tovar/_l/2836/l2836205.jpg?v=17665542422",
+        "name": "Novel Book",
+        "price": 15,
         "category": "Books",
-        "price": 15
+        "description": "Bestselling mystery novel.",
+        "image": "https://mrtns.sk/tovar/_l/2836/l2836205.jpg?v=17665542422"
     },
     {
         "id": 4,
-        "title": "Wireless Headphones",
-        "description": "Noise cancelling over-ear headphones.",
-        "photo": "https://bhcase.sk/wp-content/uploads/2024/05/MQTR3.jpeg",
+        "name": "Wireless Headphones",
+        "price": 199,
         "category": "Electronics",
-        "price": 199
+        "description": "Noise cancelling over-ear headphones.",
+        "image": "https://bhcase.sk/wp-content/uploads/2024/05/MQTR3.jpeg"
     },
     {
         "id": 5,
-        "title": "Yoga Mat",
-        "description": "Non-slip mat for yoga.",
-        "photo": "https://www.exisport.com/17531-thickbox_default/exisport-fitness-podlozka-lifefit-yoga-mat-exkl180x60x15modra-trl.jpg",
+        "name": "Yoga Mat",
+        "price": 25,
         "category": "Sport",
-        "price": 25
+        "description": "Non-slip mat for yoga.",
+        "image": "https://www.exisport.com/17531-thickbox_default/exisport-fitness-podlozka-lifefit-yoga-mat-exkl180x60x15modra-trl.jpg"
     }
 ]
 

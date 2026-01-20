@@ -128,6 +128,7 @@ const clearCart = () => {
         @remove-item="removeFromCart"
         @clear-cart="clearCart"
     />
+    <router-view />
   </div>
 </template>
 

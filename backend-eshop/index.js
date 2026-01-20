@@ -77,12 +77,18 @@ app.get('/produkty/:id', (req, res) => {
     if (fs.existsSync(productsFile)) {
         const productsData = fs.readFileSync(productsFile, 'utf8');
         const products = JSON.parse(productsData);
-
-        const product = products.find(p => p.id === id);
-        res.json(product);
+        // Try to match both string and number IDs
+        const product = products.find(p => p.id == id);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        return res.json(product);
+    } else {
+        return res.status(404).json({ error: 'Products file not found' });
     }
 
 })
+
 app.put('/produkty/:id', (req, res) => {
     const { id } = req.params;
     const { name, price, category, description, image } = req.body;
