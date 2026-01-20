@@ -61,7 +61,7 @@ const submitForm = async () => {
   <div class="add-product-form">
     <div class="form-header" @click="toggleForm">
       <h2>Pridat novy produkt</h2>
-      <CIcon :icon="cilChevronBottom" class="toggle-icon" :class="{ 'rotated': isExpanded }" size="xl"/>
+      <CIcon :icon="cilChevronBottom" class="toggle-icon" :class="{ 'rotated': isExpanded }" size="lg"/>
     </div>
     
     <transition name="expand">
@@ -115,7 +115,7 @@ const submitForm = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
+  padding: 1rem;
   cursor: pointer;
   background-color: #fff;
   transition: background-color 0.2s;
@@ -127,10 +127,12 @@ const submitForm = async () => {
 
 .form-header h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
 }
 
 .toggle-icon {
+  width: 24px;
+  height: 24px;
   transition: transform 0.3s ease;
 }
 
