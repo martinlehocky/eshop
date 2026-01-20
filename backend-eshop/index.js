@@ -52,7 +52,7 @@ app.post('/produkty', upload.single('image'), (req, res) => {
     const newProduct = {
         id: crypto.randomUUID(),
         name,
-        price: Number(price), // Ensure price is a number
+        price: Number(price),
         category: category || 'Uncategorized',
         description: description || '',
         image: imageUrl
@@ -69,6 +69,59 @@ app.post('/produkty', upload.single('image'), (req, res) => {
 
     res.status(201).json(newProduct)
 })
+
+app.get('/produkty/:id', (req, res) => {
+    const { id } = req.params;
+    const productsFile = path.join(__dirname, 'products.json');
+
+    if (fs.existsSync(productsFile)) {
+        const productsData = fs.readFileSync(productsFile, 'utf8');
+        const products = JSON.parse(productsData);
+
+        const product = products.find(p => p.id === id);
+        res.json(product);
+    }
+
+})
+app.put('/produkty/:id', (req, res) => {
+    const { id } = req.params;
+    const { name, price, category, description, image } = req.body;
+    const productsFile = path.join(__dirname, 'products.json');
+
+
+    let products = JSON.parse(fs.readFileSync(productsFile, 'utf8'));
+    const index = products.findIndex(p => p.id === id);
+
+    products[index] = {
+        ...products[index],
+        name: name ?? products[index].name,
+        price: price !== undefined ? Number(price) : products[index].price,
+        category: category ?? products[index].category,
+        description: description ?? products[index].description,
+        image: image ?? products[index].image
+    };
+
+    fs.writeFileSync(productsFile, JSON.stringify(products, null, 2), 'utf8');
+    res.json(products[index]);
+});
+
+app.delete('/produkty/:id', (req, res) => {
+    const { id } = req.params;
+    const productsFile = path.join(__dirname, 'products.json');
+
+    if (!fs.existsSync(productsFile)) return res.status(404).send('Product not found');
+
+    let products = JSON.parse(fs.readFileSync(productsFile, 'utf8'));
+    const index = products.findIndex(p => p.id === id);
+
+    if (index === -1) return res.status(404).send('Product not found');
+
+    const deleted = products.splice(index, 1)[0];
+    fs.writeFileSync(productsFile, JSON.stringify(products, null, 2), 'utf8');
+    res.json(deleted);
+});
+
+
 
 app.put('/', (req, res) => {
     res.send('Hello World!')

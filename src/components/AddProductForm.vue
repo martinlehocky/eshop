@@ -62,7 +62,7 @@ const submitForm = async () => {
       <h2>Pridat novy produkt</h2>
       <CIcon :icon="cilChevronBottom" class="toggle-icon" :class="{ 'rotated': isExpanded }" size="lg"/>
     </div>
-    
+
     <transition name="expand">
       <div v-show="isExpanded" class="form-content">
         <form @submit.prevent="submitForm" class="form-grid">
@@ -80,7 +80,7 @@ const submitForm = async () => {
             <label>Kategoria:</label>
             <input v-model="formData.category" required />
           </div>
-          
+
           <div class="form-group">
             <label>Obrazok:</label>
             <input type="file" @change="handleFileUpload" accept="image/*" />
@@ -181,13 +181,15 @@ button:hover {
   background-color: #3aa876;
 }
 
- {
+.expand-enter-active,
+.expand-leave-active {
   transition: all 0.3s ease-in-out;
   max-height: 500px;
   opacity: 1;
 }
 
- {
+.expand-enter-from,
+.expand-leave-to {
   max-height: 0;
   opacity: 0;
   padding-top: 0;
