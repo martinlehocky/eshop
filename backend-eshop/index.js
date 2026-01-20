@@ -109,12 +109,10 @@ app.delete('/produkty/:id', (req, res) => {
     const { id } = req.params;
     const productsFile = path.join(__dirname, 'products.json');
 
-    if (!fs.existsSync(productsFile)) return res.status(404).send('Product not found');
 
     let products = JSON.parse(fs.readFileSync(productsFile, 'utf8'));
     const index = products.findIndex(p => p.id === id);
 
-    if (index === -1) return res.status(404).send('Product not found');
 
     const deleted = products.splice(index, 1)[0];
     fs.writeFileSync(productsFile, JSON.stringify(products, null, 2), 'utf8');
