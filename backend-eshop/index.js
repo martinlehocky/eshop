@@ -1,13 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import multer from 'multer'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import fs from 'fs'
 import { prisma } from './orm.js'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 const app = express()
 const port = 3333
@@ -15,36 +9,45 @@ const port = 3333
 app.use(cors())
 app.use(express.json())
 
-const uploadDir = path.join(__dirname, 'uploads')
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true })
-}
+const upload = multer({ storage: multer.memoryStorage() })
+const PLACEHOLDER_IMAGE = 'https://placehold.co/300'
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir)
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, uniqueSuffix + path.extname(file.originalname))
+const toDto = (product) => {
+    const price = product?.price?.toNumber ? product.price.toNumber() : Number(product.price ?? 0)
+
+    let image = PLACEHOLDER_IMAGE
+    if (product.image) {
+        // Check if it's a Buffer
+        if (Buffer.isBuffer(product.image)) {
+            image = `data:image/jpeg;base64,${product.image.toString('base64')}`
+        }
+        // Check if it's a Uint8Array (common with Prisma PG adapter)
+        else if (product.image instanceof Uint8Array) {
+            const buffer = Buffer.from(product.image)
+            image = `data:image/jpeg;base64,${buffer.toString('base64')}`
+        }
+        // Check if it's an object with type 'Buffer' and data array
+        else if (product.image.type === 'Buffer' && Array.isArray(product.image.data)) {
+            const buffer = Buffer.from(product.image.data)
+            image = `data:image/jpeg;base64,${buffer.toString('base64')}`
+        }
+        else if (typeof product.image === 'string') {
+            image = product.image
+        } else {
+            console.log('Unknown image type:', typeof product.image, product.image.constructor?.name)
+        }
     }
-})
 
-const upload = multer({ storage: storage })
-
-app.use('/uploads', express.static(uploadDir))
-
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
+    return { ...product, id: String(product.id), price, image }
+}
 
 app.get('/produkty', async (req, res) => {
     try {
-        const products = await prisma.product.findMany({ orderBy: { createdAt: 'desc' } })
-        res.json(products)
+        const products = await prisma.product.findMany({ orderBy: { name: 'asc' } })
+        res.json(products.map(toDto))
     } catch (error) {
         console.error('Failed to fetch products', error)
-        res.status(500).json({ error: 'Failed to fetch products' })
+        res.status(500).json({ error: 'Failed to fetch products from database' })
     }
 })
 
@@ -57,10 +60,7 @@ app.post('/produkty', upload.single('image'), async (req, res) => {
     const parsedPrice = parseFloat(price)
     if (Number.isNaN(parsedPrice)) return res.status(400).send('Pole cena musi byt cislo!')
 
-    let imageUrl = 'https://placehold.co/300'
-    if (req.file) {
-        imageUrl = `http://localhost:${port}/uploads/${req.file.filename}`
-    }
+    const imageBuffer = req.file ? req.file.buffer : null
 
     try {
         const newProduct = await prisma.product.create({
@@ -69,11 +69,11 @@ app.post('/produkty', upload.single('image'), async (req, res) => {
                 price: parsedPrice,
                 category: category || 'Uncategorized',
                 description: description || '',
-                image: imageUrl
+                image: imageBuffer
             }
         })
 
-        res.status(201).json(newProduct)
+        res.status(201).json(toDto(newProduct))
     } catch (error) {
         console.error('Failed to create product', error)
         res.status(500).json({ error: 'Failed to create product' })
@@ -85,14 +85,14 @@ app.get('/produkty/:id', async (req, res) => {
     try {
         const product = await prisma.product.findUnique({ where: { id } })
         if (!product) return res.status(404).json({ error: 'Product not found' })
-        res.json(product)
+        res.json(toDto(product))
     } catch (error) {
         console.error('Failed to fetch product', error)
         res.status(500).json({ error: 'Failed to fetch product' })
     }
 })
 
-app.put('/produkty/:id', async (req, res) => {
+app.put('/produkty/:id', upload.single('image'), async (req, res) => {
     const { id } = req.params
     const { name, price, category, description, image } = req.body
 
@@ -100,7 +100,13 @@ app.put('/produkty/:id', async (req, res) => {
     if (name !== undefined) data.name = name
     if (category !== undefined) data.category = category
     if (description !== undefined) data.description = description
-    if (image !== undefined) data.image = image
+
+    if (req.file) {
+        data.image = req.file.buffer
+    } else if (image !== undefined) {
+        data.image = image ? Buffer.from(image.replace(/^data:image\/[a-zA-Z]+;base64,/, ''), 'base64') : null
+    }
+
     if (price !== undefined) {
         const parsedPrice = parseFloat(price)
         if (Number.isNaN(parsedPrice)) return res.status(400).send('Pole cena musi byt cislo!')
@@ -112,7 +118,7 @@ app.put('/produkty/:id', async (req, res) => {
         if (!existing) return res.status(404).json({ error: 'Product not found' })
 
         const updated = await prisma.product.update({ where: { id }, data })
-        res.json(updated)
+        res.json(toDto(updated))
     } catch (error) {
         console.error('Failed to update product', error)
         res.status(500).json({ error: 'Failed to update product' })
@@ -126,20 +132,13 @@ app.delete('/produkty/:id', async (req, res) => {
         if (!existing) return res.status(404).json({ error: 'Product not found' })
 
         const deleted = await prisma.product.delete({ where: { id } })
-        res.json(deleted)
+        res.json(toDto(deleted))
     } catch (error) {
         console.error('Failed to delete product', error)
         res.status(500).json({ error: 'Failed to delete product' })
     }
 })
 
-app.put('/', (req, res) => {
-    res.send('Hello World!')
-})
-
-app.delete('/', (req, res) => {
-    res.send('Hello World!')
-})
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

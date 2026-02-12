@@ -141,7 +141,6 @@ const submitForm = async () => {
 
 .form-content {
   padding: 1.5rem;
-  padding-top: 0;
   border-top: 1px solid #eee;
 }
 

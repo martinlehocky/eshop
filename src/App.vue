@@ -13,10 +13,12 @@ const cart = ref([])
 async function fetchData(){
   try {
     const response = await fetch('http://localhost:3333/produkty')
+    if (!response.ok) throw new Error(`API ${response.status}`)
     const data = await response.json()
-    products.value = data
+    products.value = Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Failed to fetch products:', error)
+    products.value = []
   }
 }
 
@@ -128,7 +130,7 @@ const clearCart = () => {
         @remove-item="removeFromCart"
         @clear-cart="clearCart"
     />
-    <router-view />
+
   </div>
 </template>
 
